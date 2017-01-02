@@ -64,7 +64,7 @@ export default class App extends Component {
 			<div class="App">
 				<div class="App-header">
 					<img src={logo} class="App-logo" alt="logo" />
-					<h2>This is a dancing Pythagoras tree</h2>
+					<h2>Dancing Pythagoras tree in <a href="https://preactjs.com" target="_blank">Preact</a></h2>
 				</div>
 				<Options restart={this.restart} />
 				<p class="App-intro">
