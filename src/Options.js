@@ -25,7 +25,7 @@ export default class Options extends Component {
 		return (
 			<div class="App-options">
 				<h2>Preact Options</h2>
-				
+
 				<label>
 					Async rendering:{' '}
 					<input type="checkbox" onChange={this.setAsync} />
