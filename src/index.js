@@ -1,5 +1,4 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import { h, render } from 'preact';
 import App from './App';
 import './index.css';
 
@@ -19,7 +18,7 @@ import './index.css';
 // options.debounceRendering = requestAnimationFrame;
 
 
-ReactDOM.render(
+render(
   <App />,
   document.getElementById('root')
 );

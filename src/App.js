@@ -1,16 +1,16 @@
-import React, { Component } from 'react';
+import { h, Component } from 'preact';
 import logo from './logo.svg';
 import './App.css';
 import { select as d3select, mouse as d3mouse } from 'd3-selection';
 import { scaleLinear } from 'd3-scale';
-
 import Pythagoras from './Pythagoras';
 
-class App extends Component {
+export default class App extends Component {
     svg = {
         width: 1280,
         height: 600
     };
+
     state = {
         currentMax: 0,
         baseW: 80,
@@ -19,55 +19,57 @@ class App extends Component {
     };
 
     realMax = 11;
+	
+	setSvgRef = c => {
+		this.svgRef = c;
+	};
 
     componentDidMount() {
-        d3select(this.refs.svg).on("mousemove", this.onMouseMove.bind(this));
+        d3select(this.svgRef).on("mousemove", this.onMouseMove);
 
         this.next();
     }
 
-    next() {
+    next = () => {
         const { currentMax } = this.state;
 
         if (currentMax < this.realMax) {
             this.setState({currentMax: currentMax + 1});
-            setTimeout(this.next.bind(this), 500);
+            setTimeout(this.next, 500);
         }
-    }
+    };
 
-    onMouseMove(event) {
-        const [x, y] = d3mouse(this.refs.svg),
-
-              scaleFactor = scaleLinear().domain([this.svg.height, 0])
-                                         .range([0, .8]),
-
-              scaleLean = scaleLinear().domain([0, this.svg.width/2, this.svg.width])
-                                       .range([.5, 0, -.5]);
+    onMouseMove = (event) => {
+        const [x, y] = d3mouse(this.svgRef),
+			scaleFactor = scaleLinear().domain([this.svg.height, 0]).range([0, .8]),
+			scaleLean = scaleLinear().domain([0, this.svg.width/2, this.svg.width]).range([.5, 0, -.5]);
 
         this.setState({
             heightFactor: scaleFactor(y),
             lean: scaleLean(x)
         });
-    }
+    };
 
-    render() {
+    render(props, state) {
+		let { width, height } = this.svg;
+
         return (
-            <div className="App">
-                <div className="App-header">
-                    <img src={logo} className="App-logo" alt="logo" />
+            <div class="App">
+                <div class="App-header">
+                    <img src={logo} class="App-logo" alt="logo" />
                     <h2>This is a dancing Pythagoras tree</h2>
                 </div>
-                <p className="App-intro">
-                    <svg width={this.svg.width} height={this.svg.height} ref="svg">
+                <p class="App-intro">
+                    <svg width={width} height={height} ref={this.setSvgRef}>
 
-                        <Pythagoras w={this.state.baseW}
-                                    h={this.state.baseW}
-                                    heightFactor={this.state.heightFactor}
-                                    lean={this.state.lean}
-                                    x={this.svg.width/2-40}
-                                    y={this.svg.height-this.state.baseW}
-                                    lvl={0}
-                                    maxlvl={this.state.currentMax}/>
+                        <Pythagoras w={state.baseW}
+							h={state.baseW}
+							heightFactor={state.heightFactor}
+							lean={state.lean}
+							x={width/2-40}
+							y={height-state.baseW}
+							lvl={0}
+							maxlvl={state.currentMax}/>
 
                     </svg>
                 </p>
@@ -75,5 +77,3 @@ class App extends Component {
         );
     }
 }
-
-export default App;
