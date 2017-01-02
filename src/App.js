@@ -68,7 +68,7 @@ export default class App extends Component {
 				</div>
 				<Options restart={this.restart} />
 				<p class="App-intro">
-					<svg width={width} height={height} ref={this.setSvgRef}>
+					<div style={{ width, height }} class="fractal" ref={this.setSvgRef}>
 						<Pythagoras
 							w={baseW}
 							h={baseW}
@@ -79,7 +79,7 @@ export default class App extends Component {
 							lvl={0}
 							maxlvl={currentMax}
 						/>
-					</svg>
+					</div>
 				</p>
 			</div>
 		);

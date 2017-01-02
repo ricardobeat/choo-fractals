@@ -25,7 +25,7 @@ const memoizedCalc = function () {
 
 
 export default class Pythagoras extends Component {
-	render({ w,x, y, heightFactor, lean, left, right, lvl, maxlvl }) {
+	render({ w, x, y, heightFactor, lean, left, right, lvl, maxlvl }) {
 		if (lvl >= maxlvl || w < 1) return null;
 
 		let { nextRight, nextLeft, A, B } = memoizedCalc(w, heightFactor, lean);
@@ -33,37 +33,41 @@ export default class Pythagoras extends Component {
 		let rotate = '';
 
 		if (left) {
-			rotate = `rotate(${-A} 0 ${w})`;
+			rotate = ` rotate(${-A}deg)`;
 		}
 		else if (right) {
-			rotate = `rotate(${B} ${w} ${w})`;
+			rotate = ` rotate(${B}deg)`;
 		}
 
 		return (
-			<g transform={`translate(${x} ${y}) ${rotate}`}>
-				{/* <rect width={w} height={w}
-					x={0} y={0}
-				style={{fill: interpolateViridis(lvl/maxlvl)}} /> */}
+				<div style={{
+					width: w,
+					height: w,
+					backgroundColor: interpolateViridis(lvl/maxlvl),
+					transformOrigin: right ? '100% 100%' : '0 100%',
+					transform: `translate(${x}px, ${y}px)${rotate}`
 
-				{/* <rect width={w} height={w} x={0} y={0} fill={interpolateViridis(lvl/maxlvl)} /> */}
+					/* alternative */
+					// left: x,
+					// top: y,
+					// transform: rotate
+				}}>
 
-				<rect style={{ width: w, height:w, x:0, y:0, fill:interpolateViridis(lvl/maxlvl) }} />
-
-				<Pythagoras w={nextLeft}
+				<Pythagoras
+					w={nextLeft}
 					x={0} y={-nextLeft}
 					lvl={lvl+1} maxlvl={maxlvl}
 					heightFactor={heightFactor}
-					lean={lean}
-					left />
+					lean={lean} left />
 
-				<Pythagoras w={nextRight}
+				<Pythagoras
+                    w={nextRight}
 					x={w-nextRight} y={-nextRight}
 					lvl={lvl+1} maxlvl={maxlvl}
 					heightFactor={heightFactor}
-					lean={lean}
-					right />
+					lean={lean} right />
 
-			</g>
+			</div>
 		);
 	}
 }

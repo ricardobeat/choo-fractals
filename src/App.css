@@ -43,6 +43,19 @@
 	margin-right: 5px;
 }
 
+
+.fractal {
+	position: relative;
+	margin: auto;
+	overflow: hidden;
+}
+.fractal div {
+	position: absolute;
+	contain: size style layout;
+	overflow: visible;
+}
+
+
 @keyframes App-logo-spin {
 	from { transform: rotate(0deg); }
 	to { transform: rotate(360deg); }
