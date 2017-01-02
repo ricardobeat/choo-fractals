@@ -10,12 +10,34 @@
 .App-header {
   background-color: #222;
   height: 150px;
-  padding: 20px;
+  padding: 20px 0 0;
   color: white;
 }
 
 .App-intro {
   font-size: large;
+}
+
+.App-options {
+    position: absolute;
+	right: 0;
+	top: 0;
+	padding: 5px;
+	z-index: 500;
+	background: #000;
+	font-size: 80%;
+	color: #FFF;
+	text-align: left;
+}
+.App-options h2 {
+	margin: 0;
+}
+.App-options label {
+	display: block;
+	padding: 5px 0;
+}
+.App-options input {
+	margin-right: 5px;
 }
 
 @keyframes App-logo-spin {
