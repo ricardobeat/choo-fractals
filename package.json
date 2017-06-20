@@ -1,22 +1,27 @@
 {
-  "name": "react-fractals",
-  "version": "0.0.1",
-  "private": true,
-  "devDependencies": {
-    "react-scripts": "0.7.0"
-  },
-  "dependencies": {
-    "d3-scale": "^1.0.4",
-    "d3-selection": "^1.0.3",
-    "preact": "^7.1.0",
-    "preact-compat": "^3.9.4",
-    "react": "github:preact-compat/react",
-    "react-dom": "github:preact-compat/react-dom"
-  },
+  "name": "choo-fractals",
+  "version": "1.0.0",
+  "description": "Choo fractals benchmark",
+  "main": "index.js",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "build": "mkdir -p build; browserify src/app.js -o build/bundle.js; cp public/* build/",
+    "deploy": "npm run build && surge build -d choo-fractals.surge.sh",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "choo",
+    "nanomorph",
+    "fractals",
+    "benchmark"
+  ],
+  "author": "Ricardo Tomasi <ricardobeat@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "choo": "^5.6.2",
+    "d3-scale": "^1.0.6",
+    "d3-selection": "^1.1.0"
+  },
+  "devDependencies": {
+    "browserify": "^14.4.0"
   }
 }

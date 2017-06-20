@@ -1,6 +1,5 @@
-
-import React from 'react';
-import { interpolateViridis } from 'd3-scale';
+const html = require('choo/html')
+const { interpolateViridis } = require('d3-scale')
 
 Math.deg = function(radians) {
   return radians * (180 / Math.PI);
@@ -22,8 +21,8 @@ const memoizedCalc = function () {
             const trigH = heightFactor*w;
 
             const result = {
-                nextRight: Math.sqrt(trigH**2 + (w * (.5+lean))**2),
-                nextLeft: Math.sqrt(trigH**2 + (w * (.5-lean))**2),
+                nextRight: Math.sqrt(Math.pow(trigH, 2) + Math.pow(w * (.5+lean), 2)),
+                nextLeft: Math.sqrt(Math.pow(trigH, 2) + Math.pow(w * (.5-lean), 2)),
                 A: Math.deg(Math.atan(trigH / ((.5-lean) * w))),
                 B: Math.deg(Math.atan(trigH / ((.5+lean) * w)))
             };
@@ -34,10 +33,12 @@ const memoizedCalc = function () {
     }
 }();
 
-const Pythagoras = ({ w,x, y, heightFactor, lean, left, right, lvl, maxlvl }) => {
+const Pythagoras = ({ w, x, y, heightFactor, lean, left, right, lvl, maxlvl }) => {
     if (lvl >= maxlvl || w < 1) {
         return null;
     }
+
+    // console.log(w)
 
     const { nextRight, nextLeft, A, B } = memoizedCalc({
         w: w,
@@ -53,34 +54,34 @@ const Pythagoras = ({ w,x, y, heightFactor, lean, left, right, lvl, maxlvl }) =>
         rotate = `rotate(${B} ${w} ${w})`;
     }
 
-    return (
-        <g transform={`translate(${x} ${y}) ${rotate}`}>
-            <rect width={w} height={w}
-                  x={0} y={0}
-                  style={{fill: interpolateViridis(lvl/maxlvl)}} />
+    return html`
+        <g transform="translate(${x} ${y}) ${rotate}">
+            <rect width=${w} height=${w} x=${0} y=${0}
+                  style="fill: ${interpolateViridis(lvl/maxlvl)}" />
 
-            <Pythagoras w={nextLeft}
-                        x={0} y={-nextLeft}
-                        lvl={lvl+1} maxlvl={maxlvl}
-                        heightFactor={heightFactor}
-                        lean={lean}
-                        left />
+            ${Pythagoras({
+                w: nextLeft,
+                x: 0,
+                y: -nextLeft,
+                lvl: lvl+1,
+                maxlvl: maxlvl,
+                heightFactor: heightFactor,
+                lean: lean,
+                left: true
+            })}
 
-            <Pythagoras w={nextRight}
-                        x={w-nextRight} y={-nextRight}
-                        lvl={lvl+1} maxlvl={maxlvl}
-                        heightFactor={heightFactor}
-                        lean={lean}
-                        right />
+            ${Pythagoras({
+                w: nextRight,
+                x: w - nextRight,
+                y: -nextRight,
+                lvl: lvl+1,
+                maxlvl: maxlvl,
+                heightFactor: heightFactor,
+                lean: lean,
+                right: true
+            })}
 
-        </g>
-    );
+        </g>`
 };
 
-
-// wrap as a classful component for async rendering: (optional)
-export default class {
-	render(props) {
-		return Pythagoras(props);
-	}
-}
+module.exports = Pythagoras

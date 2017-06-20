@@ -1,79 +1,85 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
-import { select as d3select, mouse as d3mouse } from 'd3-selection';
-import { scaleLinear } from 'd3-scale';
+const choo = require('choo')
+const html = require('choo/html')
+const { select: d3select, mouse: d3mouse } = require('d3-selection')
+const { scaleLinear } = require('d3-scale')
 
-import Pythagoras from './Pythagoras';
+const Logo = require('./logo')
+const Pythagoras = require('./pythagoras')
 
-class App extends Component {
-    svg = {
-        width: 1280,
-        height: 600
-    };
-    state = {
+const SVG_WIDTH = 1280
+const SVG_HEIGHT = 600
+const SVG = null
+
+const app = choo({ timing: false })
+
+app.use(function (state, emitter) {
+
+    var realMax = 11
+
+    Object.assign(state, {
         currentMax: 0,
         baseW: 80,
         heightFactor: 0,
         lean: 0
-    };
+    })
 
-    realMax = 11;
+    emitter.on('move', function ({ heightFactor, lean }) {
+        state.heightFactor = heightFactor
+        state.lean = lean
+        emitter.emit('render')
+    })
 
-    componentDidMount() {
-        d3select(this.refs.svg).on("mousemove", this.onMouseMove.bind(this));
-
-        this.next();
-    }
-
-    next() {
-        const { currentMax } = this.state;
-
-        if (currentMax < this.realMax) {
-            this.setState({currentMax: currentMax + 1});
-            setTimeout(this.next.bind(this), 500);
+    emitter.on('nextLevel', function () {
+        if (state.currentMax < realMax) {
+            state.currentMax += 1
+            setTimeout(function () {
+                emitter.emit('nextLevel')
+            }, 500)
         }
-    }
+    })
 
-    onMouseMove(event) {
-        const [x, y] = d3mouse(this.refs.svg),
+    emitter.emit('nextLevel')
+})
 
-              scaleFactor = scaleLinear().domain([this.svg.height, 0])
-                                         .range([0, .8]),
+function main (state, emit) {
 
-              scaleLean = scaleLinear().domain([0, this.svg.width/2, this.svg.width])
-                                       .range([.5, 0, -.5]);
-
-        this.setState({
+    function onMouseMove(event) {
+        const [x, y] = d3mouse(this)
+        const scaleFactor = scaleLinear().domain([SVG_HEIGHT, 0]).range([0, .8])
+        const scaleLean = scaleLinear().domain([0, SVG_WIDTH/2, SVG_WIDTH]).range([.5, 0, -.5])
+        emit('move', {
             heightFactor: scaleFactor(y),
             lean: scaleLean(x)
-        });
+        })
     }
 
-    render() {
-        return (
-            <div className="App">
-                <div className="App-header">
-                    <img src={logo} className="App-logo" alt="logo" />
-                    <h2>This is a dancing Pythagoras tree</h2>
-                </div>
-                <p className="App-intro">
-                    <svg width={this.svg.width} height={this.svg.height} ref="svg">
+    function attachEvents (svg) {
+        d3select(svg).on("mousemove", onMouseMove);
+    }
 
-                        <Pythagoras w={this.state.baseW}
-                                    h={this.state.baseW}
-                                    heightFactor={this.state.heightFactor}
-                                    lean={this.state.lean}
-                                    x={this.svg.width/2-40}
-                                    y={this.svg.height-this.state.baseW}
-                                    lvl={0}
-                                    maxlvl={this.state.currentMax}/>
-
-                    </svg>
-                </p>
+    return html`
+        <div class="App">
+            <div class="App-header">
+                ${Logo}
+                <h2>This is a dancing Pythagoras tree</h2>
             </div>
-        );
-    }
+            <p class="App-intro">
+                <span>${state.currentMax}</span>
+                <svg width=${SVG_WIDTH} height=${SVG_HEIGHT} ref="svg" onload=${attachEvents}>
+                    ${Pythagoras({
+                        w: state.baseW,
+                        h: state.baseW,
+                        heightFactor: state.heightFactor,
+                        lean: state.lean,
+                        x: SVG_WIDTH/2-40,
+                        y: SVG_HEIGHT-state.baseW,
+                        lvl: 0,
+                        maxlvl: state.currentMax
+                    })}
+                </svg>
+            </p>
+        </div>`
 }
 
-export default App;
+app.route('/', main)
+app.mount('.App')
